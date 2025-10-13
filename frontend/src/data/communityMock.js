@@ -1,0 +1,78 @@
+export const mockCommunityPosts = [
+  {
+    postId: 15,
+    stockId: 1001,
+    userId: 2,
+    opinion: 'Strong Buy',
+    content:
+      '테슬라가 4분기 실적에서 기대를 뛰어넘었어요! 자율주행과 에너지 저장 사업에 집중하는 만큼 2024년엔 큰 성장이 기대됩니다. 저는 강력 매수 의견입니다!',
+    createdAt: '2024-09-01T21:29:00',
+    userName: '사용자 이름',
+    likedByMe: false,
+    likeCount: 24,
+    commentCount: 8,
+    authorTierCode: 'SILVER',
+    imageUrl: '',
+  },
+  {
+    postId: 16,
+    stockId: 1002,
+    userId: 3,
+    opinion: 'Hold',
+    content:
+      '시장에서 단기 변동성이 커졌습니다. 이번 주는 관망하며 실적 발표를 지켜보려 합니다. 포지션 조절에 유의하세요.',
+    createdAt: '2024-08-28T18:05:00',
+    userName: '김애널',
+    likedByMe: true,
+    likeCount: 11,
+    commentCount: 3,
+    authorTierCode: 'BRONZE',
+    imageUrl: '',
+  },
+  {
+    postId: 17,
+    stockId: 1003,
+    userId: 4,
+    opinion: 'Sell',
+    content:
+      '경기 둔화 우려가 다시 부각되고 있어 매도 의견입니다. 에너지 섹터에선 리스크 관리가 필요해 보입니다.',
+    createdAt: '2024-08-21T10:12:00',
+    userName: '시장분석가',
+    likedByMe: false,
+    likeCount: 6,
+    commentCount: 5,
+    authorTierCode: 'GOLD',
+    imageUrl: '',
+  },
+]
+
+export const mockCommunityComments = {
+  15: [
+    {
+      commentId: 27,
+      content: 'Noooooo',
+      createdAt: '2025-09-22T11:26:52',
+      postId: 15,
+      userId: 15,
+      parentCommentId: 23,
+      userName: 'test',
+      authorTierCode: 'BRONZE',
+      deleted: false,
+      imageUrl: '',
+    },
+    {
+      commentId: 9,
+      content: 'contentcontentcontent',
+      createdAt: '2025-09-21T14:43:02',
+      postId: 15,
+      userId: 15,
+      parentCommentId: null,
+      userName: 'test',
+      authorTierCode: 'BRONZE',
+      deleted: false,
+      imageUrl: '',
+    },
+  ],
+  16: [],
+  17: [],
+}
