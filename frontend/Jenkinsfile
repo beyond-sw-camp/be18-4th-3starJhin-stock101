@@ -58,26 +58,28 @@ pipeline {
         stage('도커 이미지 빌드 및 푸시') {
             steps {
                 container('docker') {
-                    script {
-                        def buildNumber = "${env.BUILD_NUMBER}"
-                        withCredentials([usernamePassword(
-                            credentialsId: DOCKER_CREDENTIALS_ID,
-                            usernameVariable: 'DOCKER_USERNAME',
-                            passwordVariable: 'DOCKER_PASSWORD'
-                        )]) {
-                            sh 'echo $DOCKER_PASSWORD | docker login -u $DOCKER_USERNAME --password-stdin'
-                        }
+                    dir('frontend') {
+                        script {
+                            def buildNumber = "${env.BUILD_NUMBER}"
+                            withCredentials([usernamePassword(
+                                credentialsId: DOCKER_CREDENTIALS_ID,
+                                usernameVariable: 'DOCKER_USERNAME',
+                                passwordVariable: 'DOCKER_PASSWORD'
+                            )]) {
+                                sh 'echo $DOCKER_PASSWORD | docker login -u $DOCKER_USERNAME --password-stdin'
+                            }
 
-                        withEnv(["DOCKER_IMAGE_VERSION=${buildNumber}"]) {
-                            sh '''
-                                echo "도커 이미지 빌드 시작..."
-                                docker build --no-cache -t $DOCKER_IMAGE_NAME:$DOCKER_IMAGE_VERSION .
+                            withEnv(["DOCKER_IMAGE_VERSION=${buildNumber}"]) {
+                                sh '''
+                                    echo "도커 이미지 빌드 시작..."
+                                    docker build --no-cache -t $DOCKER_IMAGE_NAME:$DOCKER_IMAGE_VERSION .
 
-                                echo "도커 허브로 이미지 푸시 중..."
-                                docker push $DOCKER_IMAGE_NAME:$DOCKER_IMAGE_VERSION
+                                    echo "도커 허브로 이미지 푸시 중..."
+                                    docker push $DOCKER_IMAGE_NAME:$DOCKER_IMAGE_VERSION
 
-                                echo "도커 이미지 푸시 완료: $DOCKER_IMAGE_NAME:$DOCKER_IMAGE_VERSION"
-                            '''
+                                    echo "도커 이미지 푸시 완료: $DOCKER_IMAGE_NAME:$DOCKER_IMAGE_VERSION"
+                                '''
+                            }
                         }
                     }
                 }
