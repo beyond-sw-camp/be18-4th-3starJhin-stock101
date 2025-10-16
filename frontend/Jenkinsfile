@@ -77,6 +77,10 @@ pipeline {
                                     echo "도커 허브로 이미지 푸시 중..."
                                     docker push $DOCKER_IMAGE_NAME:$DOCKER_IMAGE_VERSION
 
+                                    echo "latest 태그 업데이트 중..."
+                                    docker tag $DOCKER_IMAGE_NAME:$DOCKER_IMAGE_VERSION $DOCKER_IMAGE_NAME:latest
+                                    docker push $DOCKER_IMAGE_NAME:latest
+
                                     echo "도커 이미지 푸시 완료: $DOCKER_IMAGE_NAME:$DOCKER_IMAGE_VERSION"
                                 '''
                             }
