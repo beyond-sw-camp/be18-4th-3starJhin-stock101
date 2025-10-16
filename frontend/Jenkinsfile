@@ -39,16 +39,18 @@ pipeline {
         stage('의존성 설치 및 빌드') {
             steps {
                 container('node') {
-                    sh '''
-                        echo "의존성 설치 중..."
-                        npm install
+                    dir('frontend') {
+                        sh '''
+                            echo "의존성 설치 중..."
+                            npm install
 
-                        echo "Vue 프로젝트 빌드 시작..."
-                        npm run build
+                            echo "Vue 프로젝트 빌드 시작..."
+                            npm run build
 
-                        echo "빌드 완료! dist 디렉터리 내용 확인:"
-                        ls -al dist
-                    '''
+                            echo "빌드 완료! dist 디렉터리 내용 확인:"
+                            ls -al dist
+                        '''
+                    }
                 }
             }
         }
