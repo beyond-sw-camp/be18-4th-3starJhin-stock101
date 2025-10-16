@@ -3,6 +3,10 @@ kind: Application
 metadata:
   name: frontend-app
   namespace: argocd
+  annotations:
+    argocd-image-updater.argoproj.io/image-list: iiijjong/frontend
+    argocd-image-updater.argoproj.io/frontend.update-strategy: latest
+    argocd-image-updater.argoproj.io/write-back-method: none  
 spec:
   project: default
   source:
