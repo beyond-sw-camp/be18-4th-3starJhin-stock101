@@ -20,7 +20,7 @@ spec:
     spec:
       containers:
       - name: frontend
-        image: iiijong/frontend:41
+        image: iiijong/frontend:43
         imagePullPolicy: Always
         ports:
         - containerPort: 80
