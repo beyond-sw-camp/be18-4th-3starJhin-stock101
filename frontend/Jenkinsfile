@@ -36,6 +36,26 @@ pipeline {
     }
 
     stages {
+        stage('Check Commit Message') {
+        steps {
+            script {
+                def changeLogSets = currentBuild.changeSets
+                def skipBuild = false
+                for (changeSet in changeLogSets) {
+                    for (entry in changeSet.items) {
+                        if (entry.msg =~ /\[skip ci\]/) {
+                            skipBuild = true
+                            echo "[skip ci] detected in commit message. Skipping build."
+                        }
+                    }
+                }
+                if (skipBuild) {
+                    currentBuild.result = 'SUCCESS'
+                    error("Build skipped due to [skip ci] commit.")
+                }
+            }
+        }
+    }
         stage('의존성 설치 및 빌드') {
             steps {
                 container('node') {
