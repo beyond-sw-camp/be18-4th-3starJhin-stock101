@@ -1,0 +1,22 @@
+-------------------------------------------------------------------------------
+Test set: com.monstersinc.stock101.restclient.stock.StockRestClientServiceTest
+-------------------------------------------------------------------------------
+Tests run: 1, Failures: 0, Errors: 1, Skipped: 0, Time elapsed: 1.618 s <<< FAILURE! -- in com.monstersinc.stock101.restclient.stock.StockRestClientServiceTest
+com.monstersinc.stock101.restclient.stock.StockRestClientServiceTest.testGetNewsForAAPL -- Time elapsed: 0.886 s <<< ERROR!
+java.lang.RuntimeException: org.springframework.web.client.HttpClientErrorException$Unauthorized: 401 Unauthorized on GET request for "https://api.polygon.io/v2/reference/news": "{"status":"ERROR","request_id":"88870031ebcbad72728d90638630c817","error":"Unknown API Key"}"
+	at com.monstersinc.stock101.restclient.stock.model.service.StockRestClientServiceImpl.getNews(StockRestClientServiceImpl.java:243)
+	at com.monstersinc.stock101.restclient.stock.StockRestClientServiceTest.testGetNewsForAAPL(StockRestClientServiceTest.java:32)
+	at java.base/java.lang.reflect.Method.invoke(Method.java:580)
+	at java.base/java.util.ArrayList.forEach(ArrayList.java:1596)
+	at java.base/java.util.ArrayList.forEach(ArrayList.java:1596)
+Caused by: org.springframework.web.client.HttpClientErrorException$Unauthorized: 401 Unauthorized on GET request for "https://api.polygon.io/v2/reference/news": "{"status":"ERROR","request_id":"88870031ebcbad72728d90638630c817","error":"Unknown API Key"}"
+	at org.springframework.web.client.HttpClientErrorException.create(HttpClientErrorException.java:106)
+	at org.springframework.web.client.DefaultResponseErrorHandler.handleError(DefaultResponseErrorHandler.java:186)
+	at org.springframework.web.client.DefaultResponseErrorHandler.handleError(DefaultResponseErrorHandler.java:147)
+	at org.springframework.web.client.RestTemplate.handleResponse(RestTemplate.java:953)
+	at org.springframework.web.client.RestTemplate.doExecute(RestTemplate.java:902)
+	at org.springframework.web.client.RestTemplate.execute(RestTemplate.java:801)
+	at org.springframework.web.client.RestTemplate.getForObject(RestTemplate.java:415)
+	at com.monstersinc.stock101.restclient.stock.model.service.StockRestClientServiceImpl.getNews(StockRestClientServiceImpl.java:149)
+	... 4 more
+

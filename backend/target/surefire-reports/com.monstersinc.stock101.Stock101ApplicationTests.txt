@@ -1,0 +1,4 @@
+-------------------------------------------------------------------------------
+Test set: com.monstersinc.stock101.Stock101ApplicationTests
+-------------------------------------------------------------------------------
+Tests run: 1, Failures: 0, Errors: 0, Skipped: 0, Time elapsed: 2.178 s -- in com.monstersinc.stock101.Stock101ApplicationTests

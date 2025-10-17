@@ -1,0 +1,9 @@
+.git
+target
+build
+.gradle
+node_modules
+**/*.iml
+**/.idea
+**/.vscode
+db/init/*.log``
