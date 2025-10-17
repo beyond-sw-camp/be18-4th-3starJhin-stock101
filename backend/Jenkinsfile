@@ -33,7 +33,7 @@ pipeline {
   }
 
   post {
-    success { echo "Pushed: ${IMAGE}:${TAG}" }
+    success { echo "Pushed: ${IMAGE}:${TAG} 깅깅"  }
     failure { echo "Failed" }
   }
 }
