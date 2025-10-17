@@ -89,6 +89,41 @@ pipeline {
                 }
             }
         }
+        
+        stage('GitOps 리포지토리 업데이트') {
+            steps {
+                container('docker') {
+                    script {
+                        withCredentials([usernamePassword(
+                            credentialsId: 'github-credentials', // 아까 등록한 GitHub 토큰
+                            usernameVariable: 'GIT_USERNAME',
+                            passwordVariable: 'GIT_TOKEN'
+                        )]) {
+                            sh '''
+                                echo "GitOps 리포지토리 클론 중..."
+                                rm -rf gitops
+                                git clone https://$GIT_USERNAME:$GIT_TOKEN@github.com/beyond-sw-camp/be18-4th-4team-project.git gitops
+                                cd gitops
+
+                                echo "Deployment 파일의 이미지 태그 수정 중..."
+                                sed -i "s|image: iiijong/frontend:.*|image: iiijong/frontend:${BUILD_NUMBER}|g" k8s/frontend/deployment.yaml
+
+                                echo "변경된 이미지 태그 확인:"
+                                grep "image:" k8s/frontend/deployment.yaml
+
+                                git config user.email "pjwfish@naver.com"
+                                git config user.name "iiijong"
+
+                                git add k8s/frontend/deployment.yaml
+                                git commit -m "update frontend image to ${BUILD_NUMBER}"
+                                git push origin main
+                            '''
+                        }
+                    }
+                }
+            }
+        }
+
     }
 
     post {
