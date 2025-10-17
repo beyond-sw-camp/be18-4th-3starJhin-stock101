@@ -1,0 +1,75 @@
+pipeline {
+    agent any
+
+    parameters {
+        string(name: 'IMAGE_TAG', defaultValue: '', description: 'Docker 이미지 태그 (빌드 번호)')
+    }
+
+    environment {
+        GITHUB_CREDENTIALS_ID = 'github-credentials'  // Jenkins에 등록한 GitHub Personal Access Token
+        REPO_URL = 'https://github.com/beyond-sw-camp/be18-4th-4team-project.git'
+        DEPLOYMENT_FILE = 'k8s/frontend/deployment.yaml'
+    }
+
+    stages {
+        stage('Clone GitOps Repository') {
+            steps {
+                script {
+                    withCredentials([usernamePassword(
+                        credentialsId: GITHUB_CREDENTIALS_ID,
+                        usernameVariable: 'GIT_USER',
+                        passwordVariable: 'GIT_TOKEN'
+                    )]) {
+                        sh '''
+                            echo "Cloning GitOps repository..."
+                            rm -rf repo
+                            git clone https://$GIT_USER:$GIT_TOKEN@github.com/beyond-sw-camp/be18-4th-4team-project.git repo
+                        '''
+                    }
+                }
+            }
+        }
+
+        stage('Update Deployment YAML') {
+            steps {
+                dir('repo') {
+                    script {
+                        sh '''
+                            echo "Updating image tag..."
+                            sed -i "s|iiijong/frontend:.*|iiijong/frontend:${IMAGE_TAG}|g" ${DEPLOYMENT_FILE}
+
+                            echo "Updated image line:"
+                            grep "image:" ${DEPLOYMENT_FILE}
+                        '''
+                    }
+                }
+            }
+        }
+
+        stage('Commit & Push Changes') {
+            steps {
+                dir('repo') {
+                    script {
+                        sh '''
+                            git config user.name "iiijong"
+                            git config user.email "pjwfish@naver.com"
+
+                            git add ${DEPLOYMENT_FILE}
+                            git commit -m "update frontend image to ${IMAGE_TAG}"
+                            git push origin main
+                        '''
+                    }
+                }
+            }
+        }
+    }
+
+    post {
+        success {
+            echo "GitOps update completed successfully."
+        }
+        failure {
+            echo "GitOps update failed."
+        }
+    }
+}
