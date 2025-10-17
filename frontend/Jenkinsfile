@@ -57,8 +57,9 @@ pipeline {
 
                     if (!shouldBuild) {
                         echo "No frontend changes detected. Skipping build."
-                        currentBuild.result = 'SUCCESS'
-                        error("Skipped build: no frontend files changed.")
+                        catchError(buildResult: 'SUCCESS', stageResult: 'SKIPPED') {
+                            error("Skipped build: no frontend files changed.")
+                        }
                     }
                 }
             }
