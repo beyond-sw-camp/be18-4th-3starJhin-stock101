@@ -89,7 +89,7 @@ pipeline {
                 }
             }
         }
-        
+
         stage('GitOps 리포지토리 업데이트') {
             steps {
                 container('docker') {
@@ -115,7 +115,7 @@ pipeline {
                                 git config user.name "iiijong"
 
                                 git add k8s/frontend/deployment.yaml
-                                git commit -m "update frontend image to ${BUILD_NUMBER}"
+                                git commit -m "update frontend image to ${BUILD_NUMBER} [skip ci]"
                                 git push origin main
                             '''
                         }
