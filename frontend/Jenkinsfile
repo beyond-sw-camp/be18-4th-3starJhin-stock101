@@ -37,6 +37,33 @@ pipeline {
 
     stages {
 
+        stage('Check Changed Paths') {
+            steps {
+                script {
+                    def changeLogSets = currentBuild.changeSets
+                    def shouldBuild = false
+
+                    for (changeSet in changeLogSets) {
+                        for (entry in changeSet.items) {
+                            echo "Commit: ${entry.msg}"
+                            for (file in entry.affectedFiles) {
+                                echo "Changed file: ${file.path}"
+                                if (file.path.startsWith("frontend/")) {
+                                    shouldBuild = true
+                                }
+                            }
+                        }
+                    }
+
+                    if (!shouldBuild) {
+                        echo "No frontend changes detected. Skipping build."
+                        currentBuild.result = 'SUCCESS'
+                        error("Skipped build: no frontend files changed.")
+                    }
+                }
+            }
+        }
+
         stage('의존성 설치 및 빌드') {
             steps {
                 container('node') {
@@ -44,9 +71,11 @@ pipeline {
                         sh '''
                             echo "의존성 설치 중..."
                             npm install
+
                             echo "Vue 프로젝트 빌드 시작..."
                             npm run build
-                            echo "빌드 완료! dist 디렉터리 내용:"
+
+                            echo "빌드 완료! dist 디렉터리 내용 확인:"
                             ls -al dist
                         '''
                     }
@@ -60,43 +89,42 @@ pipeline {
                     dir('frontend') {
                         script {
                             def buildNumber = "${env.BUILD_NUMBER}"
-
                             withCredentials([usernamePassword(
                                 credentialsId: DOCKER_CREDENTIALS_ID,
                                 usernameVariable: 'DOCKER_USERNAME',
                                 passwordVariable: 'DOCKER_PASSWORD'
                             )]) {
-                                sh '''
-                                    echo $DOCKER_PASSWORD | docker login -u $DOCKER_USERNAME --password-stdin
-                                '''
+                                sh 'echo $DOCKER_PASSWORD | docker login -u $DOCKER_USERNAME --password-stdin'
                             }
 
-                            sh """
-                                echo "도커 이미지 빌드 시작..."
-                                docker build --no-cache -t $DOCKER_IMAGE_NAME:$buildNumber .
-                                docker push $DOCKER_IMAGE_NAME:$buildNumber
+                            withEnv(["DOCKER_IMAGE_VERSION=${buildNumber}"]) {
+                                sh '''
+                                    echo "도커 이미지 빌드 시작..."
+                                    docker build --no-cache -t $DOCKER_IMAGE_NAME:$DOCKER_IMAGE_VERSION .
 
-                                echo "latest 태그로 갱신..."
-                                docker tag $DOCKER_IMAGE_NAME:$buildNumber $DOCKER_IMAGE_NAME:latest
-                                docker push $DOCKER_IMAGE_NAME:latest
+                                    echo "도커 허브로 이미지 푸시 중..."
+                                    docker push $DOCKER_IMAGE_NAME:$DOCKER_IMAGE_VERSION
 
-                                echo "이미지 푸시 완료: $DOCKER_IMAGE_NAME:$buildNumber"
-                            """
+                                    echo "latest 태그 업데이트 중..."
+                                    docker tag $DOCKER_IMAGE_NAME:$DOCKER_IMAGE_VERSION $DOCKER_IMAGE_NAME:latest
+                                    docker push $DOCKER_IMAGE_NAME:latest
+
+                                    echo "도커 이미지 푸시 완료: $DOCKER_IMAGE_NAME:$DOCKER_IMAGE_VERSION"
+                                '''
+                            }
                         }
                     }
                 }
             }
         }
-
         stage('GitOps Job 트리거') {
             steps {
                 script {
                     def buildNumber = "${env.BUILD_NUMBER}"
 
-                    // frontend-gitops 잡 호출
                     build job: 'frontend-gitops',
                         parameters: [
-                            string(name: 'IMAGE_TAG', value: buildNumber)
+                            string(name: 'IMAGE_TAG', value: "${buildNumber}")
                         ],
                         wait: true
                 }
@@ -111,15 +139,17 @@ pipeline {
                 variable: 'DISCORD_WEBHOOK_URL'
             )]) {
                 discordSend description: """
-                프론트엔드 CI 빌드 결과
+                **프론트엔드 CI/CD 빌드 보고서**
 
-                작업명 : ${env.JOB_NAME}
-                빌드번호 : #${env.BUILD_NUMBER}
-                결과 : ${currentBuild.currentResult}
-                실행시간 : ${currentBuild.duration / 1000}초
+                🔹 작업 이름 : ${env.JOB_NAME}
+                🔹 빌드 번호 : ${currentBuild.displayName}
+                🔹 결과 상태 : ${currentBuild.currentResult}
+                🔹 실행 시간 : ${currentBuild.duration / 1000}초
+
+                상세 로그는 Jenkins에서 확인 가능합니다.
                 """,
                 result: currentBuild.currentResult,
-                title: "Frontend Build Pipeline",
+                title: "프론트엔드 자동 빌드 알림",
                 webhookURL: "${DISCORD_WEBHOOK_URL}"
             }
         }
