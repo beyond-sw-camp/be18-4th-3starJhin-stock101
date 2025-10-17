@@ -6,7 +6,7 @@ pipeline {
     }
 
     environment {
-        GITHUB_CREDENTIALS_ID = 'github-credentials'  // Jenkins에 등록한 GitHub Personal Access Token
+        GITHUB_CREDENTIALS_ID = 'github-credentials'
         REPO_URL = 'https://github.com/beyond-sw-camp/be18-4th-4team-project.git'
         DEPLOYMENT_FILE = 'k8s/frontend/deployment.yaml'
     }
@@ -24,6 +24,9 @@ pipeline {
                             echo "Cloning GitOps repository..."
                             rm -rf repo
                             git clone https://$GIT_USER:$GIT_TOKEN@github.com/beyond-sw-camp/be18-4th-4team-project.git repo
+                            cd repo
+                            git checkout main
+                            git pull origin main --rebase
                         '''
                     }
                 }
@@ -55,7 +58,9 @@ pipeline {
                             git config user.email "pjwfish@naver.com"
 
                             git add ${DEPLOYMENT_FILE}
-                            git commit -m "update frontend image to ${IMAGE_TAG}"
+                            git commit -m "update frontend image to ${IMAGE_TAG}" || echo "No changes to commit"
+
+                            git pull origin main --rebase
                             git push origin main
                         '''
                     }
