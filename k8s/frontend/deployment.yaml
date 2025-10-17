@@ -5,6 +5,9 @@ metadata:
   namespace: frontend
   labels:
     app: frontend
+  annotations:
+    argocd-image-updater.argoproj.io/image-list: frontend=iiijong/frontend
+    argocd-image-updater.argoproj.io/frontend.update-strategy: latest
 spec:
   replicas: 1
   selector:
