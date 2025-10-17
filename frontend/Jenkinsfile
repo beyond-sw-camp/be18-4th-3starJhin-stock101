@@ -36,26 +36,7 @@ pipeline {
     }
 
     stages {
-        stage('Check Commit Message') {
-        steps {
-            script {
-                def changeLogSets = currentBuild.changeSets
-                def skipBuild = false
-                for (changeSet in changeLogSets) {
-                    for (entry in changeSet.items) {
-                        if (entry.msg =~ /\[skip ci\]/) {
-                            skipBuild = true
-                            echo "[skip ci] detected in commit message. Skipping build."
-                        }
-                    }
-                }
-                if (skipBuild) {
-                    currentBuild.result = 'SUCCESS'
-                    error("Build skipped due to [skip ci] commit.")
-                }
-            }
-        }
-    }
+
         stage('의존성 설치 및 빌드') {
             steps {
                 container('node') {
@@ -63,11 +44,9 @@ pipeline {
                         sh '''
                             echo "의존성 설치 중..."
                             npm install
-
                             echo "Vue 프로젝트 빌드 시작..."
                             npm run build
-
-                            echo "빌드 완료! dist 디렉터리 내용 확인:"
+                            echo "빌드 완료! dist 디렉터리 내용:"
                             ls -al dist
                         '''
                     }
@@ -81,69 +60,48 @@ pipeline {
                     dir('frontend') {
                         script {
                             def buildNumber = "${env.BUILD_NUMBER}"
+
                             withCredentials([usernamePassword(
                                 credentialsId: DOCKER_CREDENTIALS_ID,
                                 usernameVariable: 'DOCKER_USERNAME',
                                 passwordVariable: 'DOCKER_PASSWORD'
                             )]) {
-                                sh 'echo $DOCKER_PASSWORD | docker login -u $DOCKER_USERNAME --password-stdin'
-                            }
-
-                            withEnv(["DOCKER_IMAGE_VERSION=${buildNumber}"]) {
                                 sh '''
-                                    echo "도커 이미지 빌드 시작..."
-                                    docker build --no-cache -t $DOCKER_IMAGE_NAME:$DOCKER_IMAGE_VERSION .
-
-                                    echo "도커 허브로 이미지 푸시 중..."
-                                    docker push $DOCKER_IMAGE_NAME:$DOCKER_IMAGE_VERSION
-
-                                    echo "latest 태그 업데이트 중..."
-                                    docker tag $DOCKER_IMAGE_NAME:$DOCKER_IMAGE_VERSION $DOCKER_IMAGE_NAME:latest
-                                    docker push $DOCKER_IMAGE_NAME:latest
-
-                                    echo "도커 이미지 푸시 완료: $DOCKER_IMAGE_NAME:$DOCKER_IMAGE_VERSION"
+                                    echo $DOCKER_PASSWORD | docker login -u $DOCKER_USERNAME --password-stdin
                                 '''
                             }
+
+                            sh """
+                                echo "도커 이미지 빌드 시작..."
+                                docker build --no-cache -t $DOCKER_IMAGE_NAME:$buildNumber .
+                                docker push $DOCKER_IMAGE_NAME:$buildNumber
+
+                                echo "latest 태그로 갱신..."
+                                docker tag $DOCKER_IMAGE_NAME:$buildNumber $DOCKER_IMAGE_NAME:latest
+                                docker push $DOCKER_IMAGE_NAME:latest
+
+                                echo "이미지 푸시 완료: $DOCKER_IMAGE_NAME:$buildNumber"
+                            """
                         }
                     }
                 }
             }
         }
 
-        stage('GitOps 리포지토리 업데이트') {
+        stage('GitOps Job 트리거') {
             steps {
-                container('docker') {
-                    script {
-                        withCredentials([usernamePassword(
-                            credentialsId: 'github-credentials', // 아까 등록한 GitHub 토큰
-                            usernameVariable: 'GIT_USERNAME',
-                            passwordVariable: 'GIT_TOKEN'
-                        )]) {
-                            sh '''
-                                echo "GitOps 리포지토리 클론 중..."
-                                rm -rf gitops
-                                git clone https://$GIT_USERNAME:$GIT_TOKEN@github.com/beyond-sw-camp/be18-4th-4team-project.git gitops
-                                cd gitops
+                script {
+                    def buildNumber = "${env.BUILD_NUMBER}"
 
-                                echo "Deployment 파일의 이미지 태그 수정 중..."
-                                sed -i "s|image: iiijong/frontend:.*|image: iiijong/frontend:${BUILD_NUMBER}|g" k8s/frontend/deployment.yaml
-
-                                echo "변경된 이미지 태그 확인:"
-                                grep "image:" k8s/frontend/deployment.yaml
-
-                                git config user.email "pjwfish@naver.com"
-                                git config user.name "iiijong"
-
-                                git add k8s/frontend/deployment.yaml
-                                git commit -m "update frontend image to ${BUILD_NUMBER} [skip ci]"
-                                git push origin main
-                            '''
-                        }
-                    }
+                    // frontend-gitops 잡 호출
+                    build job: 'frontend-gitops',
+                        parameters: [
+                            string(name: 'IMAGE_TAG', value: buildNumber)
+                        ],
+                        wait: true
                 }
             }
         }
-
     }
 
     post {
@@ -153,17 +111,15 @@ pipeline {
                 variable: 'DISCORD_WEBHOOK_URL'
             )]) {
                 discordSend description: """
-                **프론트엔드 CI/CD 빌드 보고서**
+                프론트엔드 CI 빌드 결과
 
-                🔹 작업 이름 : ${env.JOB_NAME}
-                🔹 빌드 번호 : ${currentBuild.displayName}
-                🔹 결과 상태 : ${currentBuild.currentResult}
-                🔹 실행 시간 : ${currentBuild.duration / 1000}초
-
-                상세 로그는 Jenkins에서 확인 가능합니다.
+                작업명 : ${env.JOB_NAME}
+                빌드번호 : #${env.BUILD_NUMBER}
+                결과 : ${currentBuild.currentResult}
+                실행시간 : ${currentBuild.duration / 1000}초
                 """,
                 result: currentBuild.currentResult,
-                title: "프론트엔드 자동 빌드 알림",
+                title: "Frontend Build Pipeline",
                 webhookURL: "${DISCORD_WEBHOOK_URL}"
             }
         }
