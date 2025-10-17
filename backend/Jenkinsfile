@@ -1,0 +1,39 @@
+pipeline {
+  agent any
+
+  environment {
+    IMAGE = "docker.io/wonseokk123/stock101-be"
+    TAG   = "${env.GIT_COMMIT.take(7)}"
+  }
+
+  triggers { githubPush() }
+
+  stages {
+    stage('Checkout') {
+      steps { checkout scm }
+    }
+
+    stage('Build') {
+      steps {
+        sh 'docker build -t ${IMAGE}:${TAG} -t ${IMAGE}:latest .'
+      }
+    }
+
+    stage('Push') {
+      steps {
+        withCredentials([usernamePassword(credentialsId: 'dockerhub-creds', usernameVariable: 'USER', passwordVariable: 'PASS')]) {
+          sh '''
+            echo "$PASS" | docker login -u "$USER" --password-stdin
+            docker push ${IMAGE}:${TAG}
+            docker push ${IMAGE}:latest
+          '''
+        }
+      }
+    }
+  }
+
+  post {
+    success { echo "✅ Pushed: ${IMAGE}:${TAG}" }
+    failure { echo "❌ Failed" }
+  }
+}
