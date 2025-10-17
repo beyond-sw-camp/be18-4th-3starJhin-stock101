@@ -1,5 +1,26 @@
 pipeline {
-  agent any
+  agent {
+    kubernetes {
+      yaml """
+apiVersion: v1
+kind: Pod
+spec:
+  serviceAccountName: jenkins
+  containers:
+    - name: kaniko
+      image: gcr.io/kaniko-project/executor:latest
+      command: ["/busybox/cat"]
+      tty: true
+      volumeMounts:
+        - name: docker-config
+          mountPath: /kaniko/.docker
+  volumes:
+    - name: docker-config
+      secret:
+        secretName: dockerhub-dockercfg
+"""
+    }
+  }
 
   environment {
     IMAGE = "docker.io/wonseokk123/stock101-be"
@@ -13,27 +34,23 @@ pipeline {
       steps { checkout scm }
     }
 
-    stage('Build') {
+    stage('Build & Push (Kaniko)') {
       steps {
-        sh 'docker build -t ${IMAGE}:${TAG} -t ${IMAGE}:latest .'
-      }
-    }
-
-    stage('Push') {
-      steps {
-        withCredentials([usernamePassword(credentialsId: 'dockerhub-creds', usernameVariable: 'USER', passwordVariable: 'PASS')]) {
-          sh '''
-            echo "$PASS" | docker login -u "$USER" --password-stdin
-            docker push ${IMAGE}:${TAG}
-            docker push ${IMAGE}:latest
-          '''
+        container('kaniko') {
+          sh """
+            /kaniko/executor \
+              --context=`pwd` \
+              --dockerfile=Dockerfile \
+              --destination=${IMAGE}:${TAG} \
+              --destination=${IMAGE}:latest
+          """
         }
       }
     }
   }
 
   post {
-    success { echo "Pushed: ${IMAGE}:${TAG}"  }
-    failure { echo "Failed " }
+    success { echo "✅ Pushed: ${IMAGE}:${TAG}" }
+    failure { echo "❌ Failed" }
   }
 }
