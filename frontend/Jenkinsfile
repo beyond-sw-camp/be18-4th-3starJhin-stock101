@@ -119,18 +119,18 @@ pipeline {
             }
         }
         stage('GitOps Job 트리거') {
-            steps {
-                script {
-                    def buildNumber = "${env.BUILD_NUMBER}"
+    steps {
+        script {
+            def buildNumber = "${env.BUILD_NUMBER}"
 
-                    build job: 'frontend-gitops',
-                        parameters: [
-                            string(name: 'IMAGE_TAG', value: "${buildNumber}")
-                        ],
-                        wait: true
-                }
-            }
+            build job: 'frontend-argocd',
+                parameters: [
+                    string(name: 'IMAGE_TAG', value: "${buildNumber}")
+                ],
+                wait: true
         }
+    }
+}
     }
 
     post {
