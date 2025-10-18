@@ -5,7 +5,7 @@
     <header class="hero">
       <div class="hero__left">
         <h1>Stock 101</h1>
-        <p class="tagline">안녕@ 시장의 지표들을 한눈에 찾아보고, 새로운 투자 관점을 탐험해보세요.</p>
+        <p class="tagline">안녕@! 시장의 지표들을 한눈에 찾아보고, 새로운 투자 관점을 탐험해보세요.</p>
       </div>
       <div class="hero__actions">
         <template v-if="!authStore.isLoggedIn">
