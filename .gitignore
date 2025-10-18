@@ -1,24 +1,59 @@
-# Compiled class file
-*.class
+# Maven build output
+target/
+!.mvn/wrapper/maven-wrapper.jar
 
-# Log file
+# IDE / Editor
+.idea/
+*.iml
+.classpath
+.project
+.settings/
+.vscode/
+bin/
+build/
+out/
+
+# Logs
 *.log
+logs/
+*.out
 
-# BlueJ files
-*.ctxt
+# OS-specific
+.DS_Store
+Thumbs.db
 
-# Mobile Tools for Java (J2ME)
-.mtj.tmp/
+# Temporary / cache files
+*.tmp
+*.bak
+*.swp
+*.swo
 
-# Package Files #
-*.jar
-*.war
-*.nar
-*.ear
-*.zip
-*.tar.gz
-*.rar
+# Spring application secrets
+application-*.yml
+.env
+*.env
 
-# virtual machine crash logs, see http://www.java.com/en/download/help/error_hotspot.xml
-hs_err_pid*
-replay_pid*
+
+# Node modules and build output
+frontend/node_modules/
+frontend/dist/
+frontend/.vite/
+frontend/.cache/
+frontend/.nuxt/
+frontend/.output/
+
+# Environment variables
+frontend/.env
+frontend/.env.local
+frontend/.env.*.local
+
+# Debug / Logs
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+pnpm-debug.log*
+
+# IDE / System
+frontend/.idea/
+frontend/.vscode/
+frontend/.DS_Store
