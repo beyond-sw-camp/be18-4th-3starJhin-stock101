@@ -47,7 +47,7 @@ apiClient.interceptors.response.use(
                 // 새로운 토큰으로 원래 요청의 헤더를 업데이트하고 재시도
                 originalRequest.headers.Authorization = `Bearer ${newAccessToken}`;
                 console.log("리프레시 토큰 만료 갱신 성공");
-                return axiosInstance(originalRequest);
+                return apiClient(originalRequest);
             } catch (error) {
                 // 리프레시 토큰 만료 등 갱신 실패 시 로그아웃
                 //authStore.logout();
