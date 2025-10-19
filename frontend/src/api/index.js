@@ -5,7 +5,7 @@ import router from "@/router";
 const apiClient = axios.create({
   baseURL:
     import.meta.env.MODE === "production"
-      ? "http://frontend.beyond.com/api"
+      ? "http://frontend.beyond.com"
       : "http://localhost:8080",
   timeout: 2000,
   withCredentials: true,
