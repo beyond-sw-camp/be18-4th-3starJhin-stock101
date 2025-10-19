@@ -8,21 +8,22 @@ COPY src ./src
 RUN mvn -B clean package -DskipTests
 
 FROM eclipse-temurin:21-jdk-alpine
-WORKDIR /app
 
+WORKDIR /app
 COPY --from=builder /app/target/*.jar app.jar
 
-ENV SPRING_DATASOURCE_URL=jdbc:mariadb://mariadb-service:3306/stock101
-ENV SPRING_DATASOURCE_USERNAME=stock101
-ENV SPRING_DATASOURCE_PASSWORD=password
-ENV SPRING_DATA_REDIS_HOST=redis-service
-ENV SPRING_DATA_REDIS_PORT=6379
-ENV SPRING_DATA_REDIS_PASSWORD=6754011
-ENV JWT_ISSUER=https://accounts.beyond.com
-ENV JWT_SECRET=change-me
-ENV APIKEY_STOCK_KEY=change-me
-ENV APIKEY_KIS_KEY=change-me
-ENV APIKEY_KIS_SECRET=change-me
-
 EXPOSE 8080
+
+ENV SPRING_DATASOURCE_URL="jdbc:mariadb://mariadb-service:3306/stock101"
+ENV SPRING_DATASOURCE_USERNAME="stock101"
+ENV SPRING_DATASOURCE_PASSWORD="password"
+ENV SPRING_DATA_REDIS_HOST="redis-service"
+ENV SPRING_DATA_REDIS_PORT="6379"
+ENV SPRING_DATA_REDIS_PASSWORD=""
+ENV JWT_ISSUER="https://accounts.beyond.com"
+ENV JWT_SECRET="change-me"
+ENV APIKEY_STOCK_KEY="change-me"
+ENV APIKEY_KIS_KEY="change-me"
+ENV APIKEY_KIS_SECRET="change-me"
+
 ENTRYPOINT ["java", "-jar", "app.jar"]

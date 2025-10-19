@@ -117,7 +117,7 @@ pipeline {
                         }
 
                         if (env.BUILD_BACK == "true") {
-                            dir('department-api') {
+                            dir('backend') {
                                 sh """
                                     echo "Building backend Docker image..."
                                     docker build --no-cache -t $BACK_IMAGE:$tag .
