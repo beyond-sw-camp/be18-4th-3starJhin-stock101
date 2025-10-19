@@ -55,7 +55,7 @@ pipeline {
                     ).trim().split("\\n")
 
                     env.BUILD_FRONT = changedFiles.any { it.startsWith("frontend/") } ? "true" : "false"
-                    env.BUILD_BACK  = changedFiles.any { it.startsWith("department-api/") } ? "true" : "false"
+                    env.BUILD_BACK  = changedFiles.any { it.startsWith("backend/") } ? "true" : "false"
 
                     if (env.BUILD_FRONT == "false" && env.BUILD_BACK == "false") {
                         echo "No frontend or backend changes detected."
@@ -84,7 +84,7 @@ pipeline {
             when { expression { env.BUILD_BACK == "true" } }
             steps {
                 container('maven') {
-                    dir('department-api') {
+                    dir('backend') {
                         sh '''
                             mvn -B clean package -DskipTests
                         '''
