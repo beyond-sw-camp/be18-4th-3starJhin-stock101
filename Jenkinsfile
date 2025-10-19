@@ -40,7 +40,7 @@ pipeline {
         BACK_IMAGE  = 'iiijong/backend'
         DOCKER_CREDENTIALS_ID = 'dockerhub-access'
         GITOPS_REPO = 'https://github.com/IIIjong/stock101-k8s-manifests.git'
-        GITOPS_CREDENTIALS_ID = 'github-token'
+        GITOPS_CREDENTIALS_ID = 'github-credentials'
         DISCORD_WEBHOOK_CREDENTIALS_ID = 'discord-webhook'
     }
 
