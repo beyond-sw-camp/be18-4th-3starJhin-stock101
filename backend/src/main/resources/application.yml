@@ -28,3 +28,11 @@ apikey:
   kis-key: ${APIKEY_KIS_KEY:change-me}
   kis-secret: ${APIKEY_KIS_SECRET:change-me}
   
+management:
+  endpoints:
+    web:
+      exposure:
+        include: health,info
+  endpoint:
+    health:
+      show-details: always
