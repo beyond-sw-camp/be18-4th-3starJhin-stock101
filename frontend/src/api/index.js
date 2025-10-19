@@ -3,10 +3,7 @@ import { useAuthStore } from "@/stores/authStore";
 import router from "@/router";
 
 const apiClient = axios.create({
-  baseURL:
-    import.meta.env.MODE === "production"
-      ? "/"
-      : "http://localhost:8080",
+  baseURL: "/",
   timeout: 2000,
   withCredentials: true,
 });

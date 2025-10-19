@@ -216,6 +216,10 @@ export default {
       }
     },
     async loadHistoricalData(symbol = this.activeTicker) {
+      if (typeof symbol !== 'string' || !symbol.trim() || symbol === '—') {
+        console.warn(`[Chart.vue] Invalid symbol provided: "${symbol}". Aborting API call.`);
+        return false;
+      }
       try {
         const response = await fetch(`${HISTORICAL_ENDPOINT}/${encodeURIComponent(symbol)}`)
         if (!response.ok) throw new Error(`HTTP ${response.status}`)

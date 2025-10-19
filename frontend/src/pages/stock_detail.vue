@@ -128,7 +128,7 @@
 <script setup>
 import { ref, computed, onMounted, onUnmounted, watch } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
-import axios from 'axios'
+import apiClient from '@/api'
 
 import BaseGrid from '@/components/grid/BaseGrid.vue'
 import MetricCard from '@/components/card/variants/MetricCard.vue'
@@ -298,14 +298,12 @@ const metrics = ref([
   { key: 'per2', title: 'PER', subtitle: 'Price-to-Earnings Ratio', value: 4.2, badgeText: 'poor',    variant: 'danger'  },
   { key: 'ebs',  title: 'EBS', subtitle: 'Earnings Before Split',   value: 4.2, badgeText: 'good',    variant: 'success' },
 ])
-const loadprice = async () =>{
-  await axios.get('/api/v1/rest-client/getStockPrice')
-}
+
 
 const loadStock = async (id) => {
   if (!id) return
   try {
-    const { data } = await axios.get(`/api/v1/stock/${id}`)
+    const { data } = await apiClient.get(`/api/v1/stock/${id}`)
     const items = Array.isArray(data?.items) ? data.items : []
     const stock = items[0]
     if (!stock) return
@@ -320,7 +318,7 @@ const loadStock = async (id) => {
 const getindicator = async (id) =>{
   if (!id) return
   try {
-    const { data } = await axios.get(`/api/v1/indicator-service/news-indicator?stockId=${id}`)
+    const { data } = await apiClient.get(`/api/v1/indicator-service/news-indicator?stockId=${id}`)
     const items = Array.isArray(data?.items) ? data.items : []
     const ni = items[0]
     if (!ni) return
@@ -331,7 +329,7 @@ const getindicator = async (id) =>{
     console.error('주식 데이터를 불러오지 못했습니다.', error)
   }
   try {
-    const { data } = await axios.get(`/api/v1/indicator-service/individual-indicator?stockId=${id}`)
+    const { data } = await apiClient.get(`/api/v1/indicator-service/individual-indicator?stockId=${id}`)
     const items = Array.isArray(data?.items) ? data.items : []
     const ii = items[0]
     if (!ii) return
@@ -383,7 +381,7 @@ function mapFinancialToMetrics(fin) {
 const getfinance = async(id) =>{
   if (!id) return
   try {
-    const { data } = await axios.get(`/api/v1/indicator-service/financial-indicator?stockId=${id}`)
+    const { data } = await apiClient.get(`/api/v1/indicator-service/financial-indicator?stockId=${id}`)
     const items = Array.isArray(data?.items) ? data.items : []
     const fi = items[0]
     if (!fi) return
@@ -416,12 +414,7 @@ const prediction = async (isBullish) => {
   const payload = buildPredictionPayload(isBullish)
 
   try {
-    await axios.post('/api/v1/prediction/create', payload,{
-      headers: {
-        Authorization: `Bearer ${authToken.value}`
-        // TODO: 필요 시 Content-Type 등 추가 헤더를 정의하세요.
-      }
-    })
+    await apiClient.post('/api/v1/prediction/create', payload)
     console.log("등록 완료")
     alert("등록 완료")
   } catch (error) {
@@ -434,7 +427,6 @@ onMounted(() => {
   syncToken()
   window.addEventListener('storage', syncToken)
 
-  loadprice()
   loadStock(stockId.value)
   getindicator(stockId.value)
   getfinance(stockId.value)
