@@ -141,13 +141,13 @@ pipeline {
                             passwordVariable: 'GIT_PASSWORD'
                         )]) {
                             sh '''
-                                rm -rf k8s-manifests
-                                git clone https://$GIT_USERNAME:$GIT_PASSWORD@github.com/IIIjong/stock101-k8s-manifests.git k8s-manifests
+                                rm -rf stock101-k8s-manifests
+                                git clone https://$GIT_USERNAME:$GIT_PASSWORD@github.com/IIIjong/stock101-k8s-manifests.git stock101-k8s-manifests
                             '''
 
                             if (env.BUILD_FRONT == "true") {
                                 sh """
-                                    cd k8s-manifests/frontend
+                                    cd stock101-k8s-manifests/k8s/frontend
                                     sed -i 's|image: .*|image: ${FRONT_IMAGE}:${tag}|' deployment.yaml
                                     git config user.name "iiijong"
                                     git config user.email "pjwfish@naver.com"
@@ -158,7 +158,7 @@ pipeline {
 
                             if (env.BUILD_BACK == "true") {
                                 sh """
-                                    cd k8s-manifests/backend
+                                    cd stock101-k8s-manifests/k8s/backend
                                     sed -i 's|image: .*|image: ${BACK_IMAGE}:${tag}|' deployment.yaml
                                     git config user.name "iiijong"
                                     git config user.email "pjwfish@naver.com"
@@ -168,7 +168,7 @@ pipeline {
                             }
 
                             sh '''
-                                cd k8s-manifests
+                                cd stock101-k8s-manifests
                                 git push origin main
                             '''
                         }
