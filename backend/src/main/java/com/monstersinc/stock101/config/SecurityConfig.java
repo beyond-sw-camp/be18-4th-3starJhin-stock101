@@ -68,26 +68,31 @@ public class SecurityConfig {
     private static CorsConfigurationSource getCorsConfigurationSource() {
 
         return (request) -> {
-            // CorsConfiguration 객체를 생성해서 CORS 설정을 한다.
             CorsConfiguration corsConfiguration = new CorsConfiguration();
+            
+            corsConfiguration.setAllowedOrigins(List.of(
+                    "http://frontend.beyond.com",
+                    "http://localhost:5173",
+                    "http://localhost:5174"
+            ));
 
-            // CORS 요청에서 허용할 출처를 지정한다.
-            // corsConfiguration.setAllowedOrigins(Arrays.asList("http://localhost:5173", "http://localhost:5174"));
-            corsConfiguration.setAllowedOriginPatterns(List.of("*"));
+            // 허용할 메소드
+            corsConfiguration.setAllowedMethods(Arrays.asList(
+                    "GET", "POST", "PUT", "PATCH", "DELETE", "OPTIONS"
+            ));
 
-            // CORS 요청에서 허용할 HTTP 메소드를 지정한다.
-            corsConfiguration.setAllowedMethods(Arrays.asList("GET", "POST", "PUT", "PATCH", "DELETE", "OPTIONS"));
+            // 요청 헤더
+            corsConfiguration.setAllowedHeaders(Arrays.asList(
+                    "Authorization", "Content-Type"
+            ));
 
-            // 클라이언트가 요청 시 사용할 수 있는 헤더를 지정한다.
-            corsConfiguration.setAllowedHeaders(Arrays.asList("Authorization", "Content-Type"));
-
-            // 클라이언트가 응답에서 접근할 수 있는 헤더를 지정한다.
+            // 응답 헤더
             corsConfiguration.setExposedHeaders(List.of("Authorization"));
 
-            // 자격 증명(쿠키, 세션) 허용 여부를 설정한다.
+            // 쿠키 / 세션 허용
             corsConfiguration.setAllowCredentials(true);
 
-            // CORS Preflight 요청을 브라우저가 캐싱하는 시간(초 단위)을 설정한다.
+            // preflight 캐시 유지 시간
             corsConfiguration.setMaxAge(3600L);
 
             return corsConfiguration;

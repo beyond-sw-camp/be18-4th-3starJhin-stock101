@@ -3,10 +3,13 @@ import { useAuthStore } from "@/stores/authStore";
 import router from "@/router";
 
 const apiClient = axios.create({
-    baseURL: 'http://localhost:8080',
-    timeout: 2000,
-    withCredentials: true
-})
+  baseURL:
+    import.meta.env.MODE === "production"
+      ? "http://frontend.beyond.com/api"
+      : "http://localhost:8080",
+  timeout: 2000,
+  withCredentials: true,
+});
 
 apiClient.interceptors.request.use(
 
