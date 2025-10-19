@@ -61,11 +61,19 @@ public class AuthController {
 
     @PostMapping("/refresh")
     public ResponseEntity<BaseResponseDto<LoginResponse>> refresh(
-            @Parameter(hidden = true) @CookieValue(name = "refresh_token", defaultValue = "") String refreshToken) {
+            @Parameter(hidden = true)
+            @CookieValue(name = "refresh_token", defaultValue = "") String refreshToken) {
 
         LoginResponse loginResponse = authService.refreshAccessToken(refreshToken);
 
-        return ResponseEntity.ok(new BaseResponseDto<>(HttpStatus.OK, loginResponse));
+        String newRefreshToken = authService.createRefreshToken(loginResponse.getUserId());
+
+        ResponseCookie cookie = jwtCookieService.createRefreshTokenCookie(newRefreshToken, Duration.ofDays(1));
+        HttpHeaders headers = jwtCookieService.createRefreshTokenCookieHeaders(cookie);
+
+        return ResponseEntity.ok()
+                .headers(headers)
+                .body(new BaseResponseDto<>(HttpStatus.OK, loginResponse));
     }
 
 }
