@@ -12,7 +12,7 @@
 import VueApexCharts from 'vue3-apexcharts'
 
 const START_TS = new Date('2024-06-10T09:30:00-04:00').getTime()
-const HISTORICAL_ENDPOINT = 'http://localhost:8080/api/v1/rest-client/getStockPrice'
+const HISTORICAL_ENDPOINT = '/api/v1/rest-client/getStockPrice'
 
 const toPrice = (value) => Number(value.toFixed(2))
 

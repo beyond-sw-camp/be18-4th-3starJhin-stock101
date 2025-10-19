@@ -1,5 +1,5 @@
 import { useSessionStore } from '@/stores/session'
-import axios from 'axios'
+import apiClient from '@/api'
 import { defineStore } from 'pinia'
 
 function toDate(value) {
@@ -72,17 +72,9 @@ export const useCommunityPostStore = defineStore('communityPost', {
     async load(postId) {
       this.isLoading = true
       try {
-  const sessionStore = useSessionStore()
-  const { useAuthStore } = await import('@/stores/authStore')
-  const authStore = useAuthStore()
-  const token = authStore.userInfo?.accessToken ?? sessionStore.accessToken
-        const apiBaseUrl = import.meta.env.VITE_API_BASE_URL ?? 'http://localhost:8080'
-        const apiClient = axios.create({ baseURL: apiBaseUrl })
-  const headers = {}
-  if (token && token !== 'demo-access-token') headers.Authorization = `Bearer ${token}`
         const [postResp, commentsResp] = await Promise.all([
-          apiClient.get(`/api/v1/board/posts/${postId}`, { headers }),
-          apiClient.get(`/api/v1/board/posts/${postId}/comments`, { headers }),
+          apiClient.get(`/api/v1/board/posts/${postId}`),
+          apiClient.get(`/api/v1/board/posts/${postId}/comments`),
         ])
         const postItems = Array.isArray(postResp.data?.items) ? postResp.data.items : []
         const commentItems = Array.isArray(commentsResp.data?.items) ? commentsResp.data.items : []
@@ -98,15 +90,7 @@ export const useCommunityPostStore = defineStore('communityPost', {
     async loadComments(postId) {
       this.isLoading = true
       try {
-  const sessionStore = useSessionStore()
-  const { useAuthStore } = await import('@/stores/authStore')
-  const authStore = useAuthStore()
-        const apiBaseUrl = import.meta.env.VITE_API_BASE_URL ?? 'http://localhost:8080'
-        const apiClient = axios.create({ baseURL: apiBaseUrl })
-  const headers = {}
-  const token = authStore.userInfo?.accessToken ?? sessionStore.accessToken
-  if (token && token !== 'demo-access-token') headers.Authorization = `Bearer ${token}`
-        const commentsResp = await apiClient.get(`/api/v1/board/posts/${postId}/comments`, { headers })
+        const commentsResp = await apiClient.get(`/api/v1/board/posts/${postId}/comments`)
         const commentItems = Array.isArray(commentsResp.data?.items)
           ? commentsResp.data.items
           : Array.isArray(commentsResp.data)
@@ -128,19 +112,11 @@ export const useCommunityPostStore = defineStore('communityPost', {
         authorTierCode: user?.tier,
         parentCommentId,
       }
-  const sessionStore = useSessionStore()
-  const { useAuthStore } = await import('@/stores/authStore')
-  const authStore = useAuthStore()
-      const apiBaseUrl = import.meta.env.VITE_API_BASE_URL ?? 'http://localhost:8080'
-      const apiClient = axios.create({ baseURL: apiBaseUrl })
-  const headers = {}
-  const token = authStore.userInfo?.accessToken ?? sessionStore.accessToken
-  if (token && token !== 'demo-access-token') headers.Authorization = `Bearer ${token}`
       const { data } = await apiClient.post(`/api/v1/board/posts/${postId}/comments`, {
         content: payload.content,
         userId: payload.userId,
         parentCommentId: payload.parentCommentId,
-      }, { headers })
+      })
       const items = Array.isArray(data?.items) ? data.items : []
       const [createdRaw] = items ?? []
       if (!createdRaw) return null
@@ -172,17 +148,11 @@ export const useCommunityPostStore = defineStore('communityPost', {
           this.error = null},
     async toggleLike(postId) {
       if (!this.post || this.post.postId !== postId) return null
-      const sessionStore = useSessionStore()
       const wasLiked = this.post.likedByMe
       this.post.likedByMe = !wasLiked
       this.post.likeCount += wasLiked ? -1 : 1
       try {
-        const apiBaseUrl = import.meta.env.VITE_API_BASE_URL ?? 'http://localhost:8080'
-        const apiClient = axios.create({ baseURL: apiBaseUrl })
-  const headers = {}
-  const token = authStore.userInfo?.accessToken ?? sessionStore.accessToken
-  if (token && token !== 'demo-access-token') headers.Authorization = `Bearer ${token}`
-        const { data } = await apiClient.post(`/api/v1/board/posts/${postId}/like`, null, { headers })
+        const { data } = await apiClient.post(`/api/v1/board/posts/${postId}/like`, null)
         const items = Array.isArray(data?.items) ? data.items : []
         const [result] = items ?? []
         if (result) {

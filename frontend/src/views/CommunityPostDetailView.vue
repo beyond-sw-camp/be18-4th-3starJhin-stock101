@@ -98,7 +98,7 @@ import { useAuthStore } from '@/stores/authStore'
 import { useSessionStore } from '@/stores/session'
 import { useToastStore } from '@/stores/toast'
 import { getTierBadgeSrc } from '@/utils/tierBadge'
-import axios from 'axios'
+import apiClient from '@/api'
 import { computed, onMounted, onUnmounted, ref } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
 
@@ -123,7 +123,7 @@ const composerRef = ref(null)
 // Prefer authStore token (set by login) and fall back to sessionStore
 const isLoggedIn = computed(() => !!(authStore.userInfo?.accessToken ?? sessionStore.accessToken))
 
-const apiBaseUrl = import.meta.env.VITE_API_BASE_URL ?? 'http://localhost:8080'
+
 
 function toDate(value) {
   return value ? new Date(value).getTime() : 0
@@ -212,14 +212,9 @@ async function loadPostData(postId) {
   if (!postId) return
   isLoading.value = true
   try {
-  const headers = {}
-  // Prefer authStore token (populated by login); fallback to sessionStore. Avoid sending demo token.
-  const token = authStore.userInfo?.accessToken ?? sessionStore.accessToken
-  if (token && token !== 'demo-access-token') headers.Authorization = `Bearer ${token}`
-    const base = apiBaseUrl ? `${apiBaseUrl}/api/v1/board/posts` : '/api/v1/board/posts'
     const [postResp, commentsResp] = await Promise.all([
-      axios.get(`${base}/${postId}`, { headers }),
-      axios.get(`${base}/${postId}/comments`, { headers }),
+      apiClient.get(`/api/v1/board/posts/${postId}`),
+      apiClient.get(`/api/v1/board/posts/${postId}/comments`),
     ])
     const postItems = Array.isArray(postResp.data?.items)
       ? postResp.data.items
@@ -241,30 +236,7 @@ async function loadPostData(postId) {
   } catch (err) {
     console.error('[CommunityPostDetailView] loadPostData failed', err)
     error.value = err
-    if (isLoggedIn.value) {
-      toastStore.pushToast({ message: 'Unable to load the post.', tone: 'error' })
-    }
-    // If initial request failed (often because demo token caused server error), retry without auth headers
-    try {
-      const base = apiBaseUrl ? `${apiBaseUrl}/api/v1/board/posts` : '/api/v1/board/posts'
-      const { data } = await axios.get(`${base}/${postId}`)
-      const items = Array.isArray(data?.items) ? data.items : Array.isArray(data) ? data : []
-      post.value = items?.[0] ?? null
-      // try to fetch comments without auth as well
-      try {
-        const commentsResp = await axios.get(`${base}/${postId}/comments`)
-        const commentItems = Array.isArray(commentsResp.data?.items)
-          ? commentsResp.data.items
-          : Array.isArray(commentsResp.data)
-            ? commentsResp.data
-            : []
-        comments.value = buildCommentTree(commentItems ?? [])
-      } catch (e) {
-        console.error('[CommunityPostDetailView] fallback comments load failed', e)
-      }
-    } catch (e) {
-      console.error('[CommunityPostDetailView] fallback post load failed', e)
-    }
+    toastStore.pushToast({ message: '게시물을 불러오는데 실패했습니다.', tone: 'error' })
   } finally {
     isLoading.value = false
   }
@@ -306,15 +278,11 @@ async function handleSubmitComment() {
   const content = commentContent.value.trim()
   if (!content) return
   try {
-  const headers = {}
-  const token = authStore.userInfo?.accessToken ?? sessionStore.accessToken
-  if (token && token !== 'demo-access-token') headers.Authorization = `Bearer ${token}`
-    const base = apiBaseUrl ? `${apiBaseUrl}/api/v1/board/posts` : '/api/v1/board/posts'
-    const { data } = await axios.post(`${base}/${post.value.postId}/comments`, {
+    const { data } = await apiClient.post(`/api/v1/board/posts/${post.value.postId}/comments`, {
       content,
       userId: sessionStore.user?.id,
       parentCommentId: null,
-    }, { headers })
+    })
     const items = Array.isArray(data?.items) ? data.items : []
     const [createdRaw] = items ?? []
     if (createdRaw) {
@@ -344,15 +312,11 @@ async function handleSubmitReply(payload) {
   }
   if (!post.value) return
   try {
-  const headers = {}
-  const token = authStore.userInfo?.accessToken ?? sessionStore.accessToken
-  if (token && token !== 'demo-access-token') headers.Authorization = `Bearer ${token}`
-    const base = apiBaseUrl ? `${apiBaseUrl}/api/v1/board/posts` : '/api/v1/board/posts'
-    const { data } = await axios.post(`${base}/${post.value.postId}/comments`, {
+    const { data } = await apiClient.post(`/api/v1/board/posts/${post.value.postId}/comments`, {
       content: payload.content,
       userId: sessionStore.user?.id,
       parentCommentId: payload.parentCommentId,
-    }, { headers })
+    })
     const items = Array.isArray(data?.items) ? data.items : []
     const [createdRaw] = items ?? []
     if (createdRaw) {
@@ -384,15 +348,11 @@ async function handleToggleLike() {
     return
   }
   if (!post.value) return
-  try {
   const wasLiked = post.value.likedByMe
   // optimistic toggle for visual feedback, but DO NOT compute likeCount locally
   post.value.likedByMe = !wasLiked
-  const headers = {}
-  const token = authStore.userInfo?.accessToken ?? sessionStore.accessToken
-  if (token && token !== 'demo-access-token') headers.Authorization = `Bearer ${token}`
-    const base = apiBaseUrl ? `${apiBaseUrl}/api/v1/board/posts` : '/api/v1/board/posts'
-    const { data } = await axios.post(`${base}/${post.value.postId}/like`, null, { headers })
+  try {
+    const { data } = await apiClient.post(`/api/v1/board/posts/${post.value.postId}/like`, null)
     const items = Array.isArray(data?.items) ? data.items : []
     const [result] = items ?? []
     if (result) {

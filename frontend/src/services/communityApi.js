@@ -1,11 +1,5 @@
 import { mockCommunityComments, mockCommunityPosts } from '@/data/communityMock'
-import axios from 'axios'
-
-const BASE_URL = 'http://localhost:8080'
-const apiClient = axios.create({baseURL: BASE_URL,
-  withCredentials: false,
-
-})
+import apiClient from '@/api'
 
 let postSequence = Math.max(...mockCommunityPosts.map((item) => item.postId)) + 1
 let commentSequence = Object.values(mockCommunityComments)
@@ -55,17 +49,11 @@ function createBadRequestError(message) {
   error.status = 400
   return error
 }
-async function request(path, { method = 'GET', token, body, params } = {}) {
-  const headers = {}
-  if (token) {
-    headers.Authorization = `Bearer ${token}`
-  }
-
+async function request(path, { method = 'GET', body, params } = {}) {
   try {
     const response = await apiClient.request({
       url: path,
       method,
-      headers,
       data: body,
       params,
       validateStatus: () => true,
@@ -101,7 +89,7 @@ async function request(path, { method = 'GET', token, body, params } = {}) {
 export async function fetchPosts(options = {}) {
   try {
     const params = options.stockId ? { stockId: options.stockId } : undefined
-    const payload = await request('/api/v1/board/posts', { token: options.token, params })
+    const payload = await request('/api/v1/board/posts', { params })
     const response = toResponse(payload)
     if (!response.items.length) {
       const list = options.stockId ? posts.filter((p) => Number(p.stockId) === Number(options.stockId)) : posts
@@ -119,7 +107,6 @@ export async function toggleLike(postId, options = {}) {
   try {
     const payload = await request(`/api/v1/board/posts/${postId}/like`, {
       method: 'POST',
-      token: options.token,
     })
     const response = toResponse(payload)
     if (!response.items.length) {
@@ -169,7 +156,6 @@ export async function createPost(payload = {}, options = {}) {
     const response = await request('/api/v1/board/posts', {
       method: 'POST',
       body,
-      token: options.token,
     })
     const normalized = toResponse(response, 201, 'Created')
     if (!normalized.items.length) {
@@ -188,7 +174,7 @@ export async function createPost(payload = {}, options = {}) {
       opinion: payload.opinion,
       content: trimmedContent,
       createdAt: new Date().toISOString(),
-      userName: payload.userName ?? '»ç¿ëÀÚ',
+      userName: payload.userName ?? 'ï¿½ï¿½ï¿½ï¿½ï¿½',
       likedByMe: false,
       likeCount: 0,
       commentCount: 0,
@@ -205,9 +191,7 @@ export async function createPost(payload = {}, options = {}) {
 
 export async function fetchPostDetail(postId, options = {}) {
   try {
-    const payload = await request(`/api/v1/board/posts/${postId}`, {
-      token: options.token,
-    })
+    const payload = await request(`/api/v1/board/posts/${postId}`)
     const response = toResponse(payload)
     if (!response.items.length) {
       return buildResponse(200, 'OK', posts.filter((item) => item.postId === postId))
@@ -223,9 +207,7 @@ export async function fetchPostDetail(postId, options = {}) {
 
 export async function fetchComments(postId, options = {}) {
   try {
-    const payload = await request(`/api/v1/board/posts/${postId}/comments`, {
-      token: options.token,
-    })
+    const payload = await request(`/api/v1/board/posts/${postId}/comments`)
     const response = toResponse(payload)
     if (!response.items.length) {
       return buildResponse(200, 'OK', commentsMap.get(postId) ?? [])
@@ -248,7 +230,6 @@ export async function createComment(postId, payload, options = {}) {
     const response = await request(`/api/v1/board/posts/${postId}/comments`, {
       method: 'POST',
       body,
-      token: options.token,
     })
     const normalized = toResponse(response, 201, 'Created')
     if (!normalized.items.length) {
@@ -265,7 +246,7 @@ export async function createComment(postId, payload, options = {}) {
       postId,
       userId: payload.userId ?? 0,
       parentCommentId: payload.parentCommentId ?? null,
-      userName: payload.userName ?? '»ç¿ëÀÚ',
+      userName: payload.userName ?? 'ï¿½ï¿½ï¿½ï¿½ï¿½',
       authorTierCode: payload.authorTierCode ?? 'BRONZE',
       // totalCommentCount should reflect the total number of comments for the post
       totalCommentCount: 0,

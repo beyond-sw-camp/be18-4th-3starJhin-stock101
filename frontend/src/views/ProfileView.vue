@@ -57,7 +57,7 @@ import PredictionSummaryCard from '@/components/predictions/PredictionSummaryCar
 import CommunityPostCard from '@/components/community/CommunityPostCard.vue'
 import { getUserPredictions, getUserPredictionsById, transformPredictionData } from '@/services/predictionApi'
 import { myProfile, otherProfile, calculatePredictionSummary } from '@/data/profileDemo'
-import axios from 'axios'
+import apiClient from '@/api'
 
 const route = useRoute()
 const router = useRouter()
@@ -210,7 +210,7 @@ const fetchUserInfo = async (targetUserId) => {
   try {
     // Always fetch user info from API using the actual user ID
     console.log('Fetching user info from API for user:', targetUserId)
-    const response = await axios.get(`http://localhost:8080/api/v1/users/${targetUserId}`)
+    const response = await apiClient.get(`/api/v1/users/${targetUserId}`)
     const userData = response.data.items[0]
     profile.value.user = {
       id: userData.userId,
@@ -232,13 +232,8 @@ const fetchUserInfo = async (targetUserId) => {
 const fetchUserPosts = async (targetUserId) => {
   try {
     console.log('Fetching user posts from API for user:', targetUserId)
-    const headers = {}
-    const token = authStore.userInfo?.accessToken
-    if (token && token !== 'demo-access-token') {
-      headers.Authorization = `Bearer ${token}`
-    }
 
-    const response = await axios.get(`http://localhost:8080/api/v1/board/user/${targetUserId}`, { headers })
+    const response = await apiClient.get(`/api/v1/board/user/${targetUserId}`)
     const items = Array.isArray(response.data?.items)
       ? response.data.items
       : Array.isArray(response.data?.data)
@@ -264,7 +259,7 @@ const fetchPredictions = async (targetUserId) => {
 
    // Fetch predictions using direct axios call (for other users or unauthenticated)
     console.log('Fetching predictions for user:', targetUserId)
-    response = await axios.get(`http://localhost:8080/api/v1/prediction/user/${targetUserId}`)
+    response = await apiClient.get(`/api/v1/prediction/user/${targetUserId}`)
 
     const transformedPredictions = transformPredictionData(response.data || response)
     profile.value.predictions = transformedPredictions

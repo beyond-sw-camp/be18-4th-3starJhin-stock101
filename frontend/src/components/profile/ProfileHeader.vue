@@ -68,7 +68,7 @@
 <script setup>
 import { computed, ref, reactive } from 'vue'
 import { getTierBadgeSrc } from '@/utils/tierBadge'
-import axios from 'axios'
+import apiClient from '@/api'
 import { useAuthStore } from '@/stores/authStore'
 
 const props = defineProps({
@@ -130,13 +130,9 @@ const closeModal = () => {
 const saveProfile = async () => {
   loading.value = true
   try {
-    const response = await axios.patch('http://localhost:8080/api/v1/users/me', {
+    const response = await apiClient.patch('/api/v1/users/me', {
       name: editForm.name,
       statusMessage: editForm.statusMessage
-    }, {
-      headers: {
-        'Authorization': `Bearer ${authStore.userInfo.accessToken}`
-      }
     })
 
     console.log('Profile updated successfully:', response.data)
