@@ -27,30 +27,31 @@ apiClient.interceptors.request.use(
 
 
 apiClient.interceptors.response.use(
-    (response) =>{
+    (response) => {
         return response;
     },
-    async(error)=>{
+    async (error) => {
         const orignalRequest = error.config;
 
-        if(error.response.status === 401 && !orignalRequest._retry){
+        if (error.response.status === 401 && !orignalRequest._retry) {
             orignalRequest._retry = true;
+            const authStore = useAuthStore();
 
             try {
                 const refreshResponse = await axios.post('/api/v1/auth/refresh');
                 const newAccessToken = refreshResponse.data.accessToken;
 
                 authStore.setAccessToken(newAccessToken);
-                // 새로운 토큰으로 원래 요청의 헤더를 업데이트하고 재시도
-                originalRequest.headers.Authorization = `Bearer ${newAccessToken}`;
-                console.log("리프레시 토큰 만료 갱신 성공");
-                return apiClient(originalRequest);
-            } catch (error) {
-                // 리프레시 토큰 만료 등 갱신 실패 시 로그아웃
-                //authStore.logout();
-                console.log("리프레시 토큰 만료 갱신 실패");
+                
+                orignalRequest.headers.Authorization = `Bearer ${newAccessToken}`;
+                console.log("액세스 토큰 갱신 성공");
+                return apiClient(orignalRequest);
+            } catch (refreshError) {
+                
+                authStore.logout();
+                console.log("리프레시 토큰 만료, 갱신 실패");
                 router.push('/');
-                return Promise.reject(error);
+                return Promise.reject(refreshError);
             }
         }
         return Promise.reject(error);
