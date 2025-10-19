@@ -50,7 +50,7 @@ pipeline {
                 script {
                     echo "Checking changed files..."
                     def changedFiles = sh(
-                        script: 'git diff --name-only origin/main...HEAD',
+                        script: 'git diff --name-only HEAD~1 HEAD',
                         returnStdout: true
                     ).trim().split("\\n")
 
