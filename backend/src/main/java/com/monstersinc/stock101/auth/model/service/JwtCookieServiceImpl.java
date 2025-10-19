@@ -20,7 +20,7 @@ public class JwtCookieServiceImpl implements JwtCookieService {
         return ResponseCookie
                 .from("refresh_token", refreshToken)
                 .httpOnly(true)
-                .secure(true)
+                .secure(false)
                 .sameSite("None")
                 .path("/")
                 .maxAge(duration)
@@ -32,7 +32,7 @@ public class JwtCookieServiceImpl implements JwtCookieService {
         return ResponseCookie
                 .from("refresh_token", "")
                 .httpOnly(true)
-                .secure(true)
+                .secure(false)
                 .sameSite("None")
                 .path("/")
                 .maxAge(0)
