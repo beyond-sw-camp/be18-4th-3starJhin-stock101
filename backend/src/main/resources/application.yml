@@ -1,33 +1,38 @@
 spring:
   datasource:
     driver-class-name: org.mariadb.jdbc.Driver
-    url: ${SPRING_DATASOURCE_URL:jdbc:mariadb://localhost:3306/stock101}
-    username: ${SPRING_DATASOURCE_USERNAME:root}
-    password: ${SPRING_DATASOURCE_PASSWORD:password}
+    url: ${SPRING_DATASOURCE_URL}
+    username: ${SPRING_DATASOURCE_USERNAME}
+    password: ${SPRING_DATASOURCE_PASSWORD}
+
   data:
     redis:
-      host: ${SPRING_DATA_REDIS_HOST:localhost}
-      port: ${SPRING_DATA_REDIS_PORT:6379}
-      password: ${SPRING_DATA_REDIS_PASSWORD:}
+      host: ${SPRING_DATA_REDIS_HOST}
+      port: ${SPRING_DATA_REDIS_PORT}
+      password: ${SPRING_DATA_REDIS_PASSWORD}
+
 mybatis:
   type-aliases-package: com.monstersinc.stock101.*.model.vo
   mapper-locations:
     - classpath:mappers/**/*.xml
   configuration:
     jdbc-type-for-null: NULL
+
 springdoc:
   swagger-ui:
     operations-sorter: method
   paths-to-match:
     - /api/v1/**
+
 jwt:
-  issuer: ${JWT_ISSUER:https://accounts.beyond.com}
-  secret: ${JWT_SECRET:change-me}
+  issuer: ${JWT_ISSUER}
+  secret: ${JWT_SECRET}
+
 apikey:
-  stock-key: ${APIKEY_STOCK_KEY:change-me}
-  kis-key: ${APIKEY_KIS_KEY:change-me}
-  kis-secret: ${APIKEY_KIS_SECRET:change-me}
-  
+  stock-key: ${APIKEY_STOCK_KEY}
+  kis-key: ${APIKEY_KIS_KEY}
+  kis-secret: ${APIKEY_KIS_SECRET}
+
 management:
   endpoints:
     web:
