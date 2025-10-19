@@ -70,10 +70,10 @@ public class SecurityConfig {
         return (request) -> {
             CorsConfiguration corsConfiguration = new CorsConfiguration();
             
-            corsConfiguration.setAllowedOrigins(List.of(
-                    "http://frontend.beyond.com",
-                    "http://localhost:5173",
-                    "http://localhost:5174"
+            corsConfiguration.setAllowedOriginPatterns(List.of(
+                "http://frontend.beyond.com",
+                "http://localhost:5173",
+                "http://localhost:5174"
             ));
 
             // 허용할 메소드
