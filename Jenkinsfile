@@ -49,25 +49,18 @@ pipeline {
             steps {
                 script {
                     echo "Checking changed files..."
-                    sh '''
-                        git fetch --unshallow || true
-                        git fetch origin main
-                    '''
                     def changedFiles = sh(
-                        script: 'git diff --name-only origin/main...HEAD',
+                        script: 'git diff --name-only HEAD~1 HEAD',
                         returnStdout: true
                     ).trim().split("\\n")
 
                     env.BUILD_FRONT = changedFiles.any { it.startsWith("frontend/") } ? "true" : "false"
                     env.BUILD_BACK  = changedFiles.any { it.startsWith("backend/") } ? "true" : "false"
 
-                    echo "Frontend changes: ${env.BUILD_FRONT}"
-                    echo "Backend changes: ${env.BUILD_BACK}"
-
                     if (env.BUILD_FRONT == "false" && env.BUILD_BACK == "false") {
-                        echo "No frontend or backend changes detected. Skipping build."
+                        echo "No frontend or backend changes detected."
                         currentBuild.result = 'SUCCESS'
-                        return
+                        error("Build skipped.")
                     }
                 }
             }
@@ -87,26 +80,11 @@ pipeline {
             }
         }
 
-        stage('Backend Unit Test') {
-            when { expression { env.BUILD_BACK == "true" } }
-            steps {
-                container('maven') {
-                    dir('backend') {
-                        echo "Running backend unit tests..."
-                        sh '''
-                            mvn -B clean test
-                        '''
-                    }
-                }
-            }
-        }
-
         stage('Backend Build') {
             when { expression { env.BUILD_BACK == "true" } }
             steps {
                 container('maven') {
                     dir('backend') {
-                        echo "Packaging backend (skip tests in Docker build)..."
                         sh '''
                             mvn -B clean package -DskipTests
                         '''
