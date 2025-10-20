@@ -51,21 +51,26 @@ pipeline {
                 script {
                     echo "Checking changed files..."
 
-                    sh '''
-                        git fetch origin main
-                        git fetch --all
-                    '''
+                    def currentCommit = sh(
+                        script: "git rev-parse HEAD",
+                        returnStdout: true
+                    ).trim()
+
+                    def previousCommit = currentBuild.previousSuccessfulBuild ?
+                        currentBuild.previousSuccessfulBuild.rawBuild.getEnvironment().get('GIT_COMMIT') :
+                        sh(script: "git rev-parse HEAD~1", returnStdout: true).trim()
+
+                    echo "Comparing ${previousCommit}..${currentCommit}"
 
                     def changedFiles = sh(
-                        script: '''
-                            git diff --name-only origin/main...HEAD || true
-                        ''',
+                        script: "git diff --name-only ${previousCommit} ${currentCommit}",
                         returnStdout: true
                     ).trim().split("\\n")
 
                     env.BUILD_FRONT = changedFiles.any { it.startsWith("frontend/") } ? "true" : "false"
                     env.BUILD_BACK  = changedFiles.any { it.startsWith("backend/") } ? "true" : "false"
 
+                    echo "Changed files: ${changedFiles.join(', ')}"
                     echo "Frontend changes: ${env.BUILD_FRONT}"
                     echo "Backend changes: ${env.BUILD_BACK}"
 
