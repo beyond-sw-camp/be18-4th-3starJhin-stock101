@@ -50,12 +50,16 @@ pipeline {
             steps {
                 script {
                     echo "Checking changed files..."
+
                     sh '''
-                        git fetch --unshallow || true
                         git fetch origin main
+                        git fetch --all
                     '''
+
                     def changedFiles = sh(
-                        script: 'git diff --name-only origin/main...HEAD',
+                        script: '''
+                            git diff --name-only origin/main...HEAD || true
+                        ''',
                         returnStdout: true
                     ).trim().split("\\n")
 
