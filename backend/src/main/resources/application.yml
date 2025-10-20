@@ -12,7 +12,7 @@ spring:
       password: ${SPRING_DATA_REDIS_PASSWORD}
 
 mybatis:
-  type-aliases-package: com.monstersinc.stock101.*.model.vo
+  type-aliases-package: com.monstersinc.stock101
   mapper-locations:
     - classpath:mappers/**/*.xml
   configuration:
