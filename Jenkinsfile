@@ -49,6 +49,10 @@ pipeline {
             steps {
                 script {
                     echo "Checking changed files..."
+                    sh '''
+                        git fetch --unshallow || true
+                        git fetch origin main
+                    '''
                     def changedFiles = sh(
                         script: 'git diff --name-only HEAD~1 HEAD',
                         returnStdout: true
@@ -57,10 +61,13 @@ pipeline {
                     env.BUILD_FRONT = changedFiles.any { it.startsWith("frontend/") } ? "true" : "false"
                     env.BUILD_BACK  = changedFiles.any { it.startsWith("backend/") } ? "true" : "false"
 
+                    echo "Frontend changes: ${env.BUILD_FRONT}"
+                    echo "Backend changes: ${env.BUILD_BACK}"
+
                     if (env.BUILD_FRONT == "false" && env.BUILD_BACK == "false") {
-                        echo "No frontend or backend changes detected."
+                        echo "No frontend or backend changes detected. Skipping build."
                         currentBuild.result = 'SUCCESS'
-                        error("Build skipped.")
+                        return
                     }
                 }
             }
