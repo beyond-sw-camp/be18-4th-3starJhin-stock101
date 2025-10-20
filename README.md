@@ -11,6 +11,7 @@
 5. [🪧ERD](#ERD)
 6. [🗃️테이블 명세서](#테이블-명세서)
 7. [🎯API 명세서](#API-명세서)
+8. [CI/CD Flow](#CI/CD-Flow)
 ---
 ### 👥팀원
 
@@ -153,3 +154,29 @@ Stock101은 S&P500 상위 10개 종목을 중심으로 기업 정보 + 투자자
 
 ## [🎯API 명세서](https://ber5f1ykpv.apidog.io/)
 <img width="1445" height="1082" alt="image" src="https://github.com/user-attachments/assets/68fbff20-239e-419f-bcd8-bb7c196edfe6" />
+
+
+## CI/CD Flow
+### 1. 코드 수정 후 Commit & Push
+![커밋.gif](./docs/커밋.gif)
+
+### 2. 젠킨스 수행
+<video controls width="800" src="https://github.com/beyond-sw-camp/be18-4th-4team-project/blob/main/docs/%EC%A0%A0%ED%82%A8%EC%8A%A4-%EC%8B%9C%EC%97%B0.mp4?raw=1"></video>
+
+### 3. 디스코드 알림 확인
+![디스코드-알림.png](./docs/디스코드-알림.png)
+
+### 4. Docker Hub에 Push된 이미지 확인
+#### 4.1. Backend
+![](./docs/도커허브백엔드.png)
+#### 4.2. Frontend
+![](./docs/도커허브프론트.png)
+
+### 5. Menifests 반영 결과
+![](./docs/매니페스트-결과.png)
+
+### 6. ArgoCD 배포 확인
+#### 6.1. Backend
+![](./docs/argocd백엔드.png)
+#### 6.1. Frontend
+![](./docs/argocd프론트.png)
