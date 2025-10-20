@@ -45,22 +45,30 @@ pipeline {
     }
 
     stages {
+
         stage('Detect Changes') {
             steps {
                 script {
                     echo "Checking changed files..."
+                    sh '''
+                        git fetch --unshallow || true
+                        git fetch origin main
+                    '''
                     def changedFiles = sh(
-                        script: 'git diff --name-only HEAD~1 HEAD',
+                        script: 'git diff --name-only origin/main...HEAD',
                         returnStdout: true
                     ).trim().split("\\n")
 
                     env.BUILD_FRONT = changedFiles.any { it.startsWith("frontend/") } ? "true" : "false"
                     env.BUILD_BACK  = changedFiles.any { it.startsWith("backend/") } ? "true" : "false"
 
+                    echo "Frontend changes: ${env.BUILD_FRONT}"
+                    echo "Backend changes: ${env.BUILD_BACK}"
+
                     if (env.BUILD_FRONT == "false" && env.BUILD_BACK == "false") {
-                        echo "No frontend or backend changes detected."
+                        echo "No frontend or backend changes detected. Skipping build."
                         currentBuild.result = 'SUCCESS'
-                        error("Build skipped.")
+                        return
                     }
                 }
             }
@@ -71,9 +79,24 @@ pipeline {
             steps {
                 container('node') {
                     dir('frontend') {
+                        echo "Building frontend..."
                         sh '''
                             npm ci
                             npm run build
+                        '''
+                    }
+                }
+            }
+        }
+
+        stage('Backend Unit Test') {
+            when { expression { env.BUILD_BACK == "true" } }
+            steps {
+                container('maven') {
+                    dir('backend') {
+                        echo "Running backend unit tests..."
+                        sh '''
+                            mvn -B clean test
                         '''
                     }
                 }
@@ -85,6 +108,7 @@ pipeline {
             steps {
                 container('maven') {
                     dir('backend') {
+                        echo "Packaging backend..."
                         sh '''
                             mvn -B clean package -DskipTests
                         '''
@@ -192,7 +216,7 @@ pipeline {
                 Build: ${currentBuild.displayName}
                 Frontend Changed: ${env.BUILD_FRONT}
                 Backend Changed: ${env.BUILD_BACK}
-                Duration: ${currentBuild.duration / 1000}s
+                Duration: ${(currentBuild.duration / 1000).intValue()}s
                 """,
                 result: currentBuild.currentResult,
                 title: "Fullstack CI/CD (GitOps Auto Deploy)",
