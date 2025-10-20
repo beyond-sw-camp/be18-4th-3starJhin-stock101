@@ -183,3 +183,5 @@ Stock101은 S&P500 상위 10개 종목을 중심으로 기업 정보 + 투자자
 ![](./docs/argocd백엔드.png)
 #### 6.1. Frontend
 ![](./docs/argocd프론트.png)
+
+![](./docs/프론트결과.gif)
