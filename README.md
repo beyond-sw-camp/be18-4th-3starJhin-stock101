@@ -11,7 +11,7 @@
 5. [🪧ERD](#ERD)
 6. [🗃️테이블 명세서](#테이블-명세서)
 7. [🎯API 명세서](#API-명세서)
-8. [CI/CD Flow](#CI/CD-Flow)
+8. [🎬CI/CD Flow](#CI/CD-Flow)
 ---
 ### 👥팀원
 
@@ -156,12 +156,12 @@ Stock101은 S&P500 상위 10개 종목을 중심으로 기업 정보 + 투자자
 <img width="1445" height="1082" alt="image" src="https://github.com/user-attachments/assets/68fbff20-239e-419f-bcd8-bb7c196edfe6" />
 
 
-## CI/CD Flow
+## 🎬CI/CD Flow
 ### 1. 코드 수정 후 Commit & Push
 ![커밋.gif](./docs/커밋.gif)
 
 ### 2. 젠킨스 수행
-<video controls width="800" src="https://github.com/beyond-sw-camp/be18-4th-4team-project/blob/main/docs/%EC%A0%A0%ED%82%A8%EC%8A%A4-%EC%8B%9C%EC%97%B0.mp4?raw=1"></video>
+[![시연 영상 보기](https://img.shields.io/badge/Watch%20on-Google%20Drive-blue?logo=google-drive&logoColor=white)](https://drive.google.com/file/d/1GCoVwWQh5lDIPsXWY5ST48eVvDx1qd5C/view)
 
 ### 3. 디스코드 알림 확인
 ![디스코드-알림.png](./docs/디스코드-알림.png)
