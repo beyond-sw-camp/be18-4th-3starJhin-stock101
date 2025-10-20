@@ -12,6 +12,7 @@
 6. [🗃️테이블 명세서](#테이블-명세서)
 7. [🎯API 명세서](#API-명세서)
 8. [🎬CI/CD Flow](#CI/CD-Flow)
+9. [🧪Unit Test](#Unit-Test)
 ---
 ### 👥팀원
 
@@ -138,8 +139,7 @@ Stock101은 S&P500 상위 10개 종목을 중심으로 기업 정보 + 투자자
 
 
 ## 🔧시스템 아키텍쳐
-<img width="1230" height="589" alt="image" src="https://github.com/user-attachments/assets/af0e4f17-fa51-4427-81d8-1cd8ba9f40d3" />
-
+<img width="1230" height="589" alt="image" src="https://github.com/user-attachments/assets/5ff0ed2d-797f-4000-91a0-fabd99f7b10e" />
 
 ## [📋요구사항 명세서](https://docs.google.com/spreadsheets/d/14wwJn_T3o99kF_oEq8uZ0xYGWGwoTiGmOdv44CbQwt0/edit?gid=434890356#gid=434890356)
 <img width="1428" height="819" alt="image" src="https://github.com/user-attachments/assets/aaf346ab-7e0c-4373-b899-f4df031fd0d0" />
