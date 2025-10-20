@@ -1,6 +1,6 @@
-package com.monstersinc.stock101.indicator.model.dto;
+package com.monstersinc.stock101.indicator.model.model.dto;
 
-import com.monstersinc.stock101.indicator.model.IndicatorResult;
+import com.monstersinc.stock101.indicator.model.model.IndicatorResult;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;

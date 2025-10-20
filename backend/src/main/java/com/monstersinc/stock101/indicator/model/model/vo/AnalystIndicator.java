@@ -1,4 +1,4 @@
-package com.monstersinc.stock101.indicator.model.vo;
+package com.monstersinc.stock101.indicator.model.model.vo;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;

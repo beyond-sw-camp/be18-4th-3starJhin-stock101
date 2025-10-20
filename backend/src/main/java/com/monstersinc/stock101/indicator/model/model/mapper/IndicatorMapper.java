@@ -1,9 +1,9 @@
-package com.monstersinc.stock101.indicator.model.mapper;
+package com.monstersinc.stock101.indicator.model.model.mapper;
 
-import com.monstersinc.stock101.indicator.model.vo.AnalystIndicator;
-import com.monstersinc.stock101.indicator.model.vo.FinancialIndicator;
-import com.monstersinc.stock101.indicator.model.vo.IndividualIndicator;
-import com.monstersinc.stock101.indicator.model.vo.NewsIndicator;
+import com.monstersinc.stock101.indicator.model.model.vo.AnalystIndicator;
+import com.monstersinc.stock101.indicator.model.model.vo.FinancialIndicator;
+import com.monstersinc.stock101.indicator.model.model.vo.IndividualIndicator;
+import com.monstersinc.stock101.indicator.model.model.vo.NewsIndicator;
 import org.apache.ibatis.annotations.Mapper;
 
 @Mapper
