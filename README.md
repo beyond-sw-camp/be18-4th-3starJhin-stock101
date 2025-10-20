@@ -163,6 +163,9 @@ Stock101은 S&P500 상위 10개 종목을 중심으로 기업 정보 + 투자자
 ### 2. 젠킨스 수행
 [![시연 영상 보기](https://img.shields.io/badge/Watch%20on-Google%20Drive-blue?logo=google-drive&logoColor=white)](https://drive.google.com/file/d/1GCoVwWQh5lDIPsXWY5ST48eVvDx1qd5C/view)
 
+<img width="1213" height="610" alt="image" src="https://github.com/user-attachments/assets/41134be9-e480-4d56-b10d-078eb4cf1271" />
+
+
 ### 3. 디스코드 알림 확인
 ![디스코드-알림.png](./docs/디스코드-알림.png)
 
