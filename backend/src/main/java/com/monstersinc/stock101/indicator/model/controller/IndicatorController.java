@@ -1,12 +1,11 @@
-package com.monstersinc.stock101.indicator.controller;
+package com.monstersinc.stock101.indicator.model.controller;
 
 import com.monstersinc.stock101.common.model.dto.BaseResponseDto;
-import com.monstersinc.stock101.indicator.model.service.IndicatorService;
-import com.monstersinc.stock101.indicator.model.vo.AnalystIndicator;
-import com.monstersinc.stock101.indicator.model.vo.FinancialIndicator;
-import com.monstersinc.stock101.indicator.model.vo.IndividualIndicator;
-import com.monstersinc.stock101.indicator.model.vo.NewsIndicator;
-import com.monstersinc.stock101.stock.model.service.StockService;
+import com.monstersinc.stock101.indicator.model.model.service.IndicatorService;
+import com.monstersinc.stock101.indicator.model.model.vo.AnalystIndicator;
+import com.monstersinc.stock101.indicator.model.model.vo.FinancialIndicator;
+import com.monstersinc.stock101.indicator.model.model.vo.IndividualIndicator;
+import com.monstersinc.stock101.indicator.model.model.vo.NewsIndicator;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
