@@ -186,16 +186,33 @@ Stock101은 S&P500 상위 10개 종목을 중심으로 기업 정보 + 투자자
 
 ![](./docs/프론트결과.gif)
 
-## 🧪Unit Test
-### CommunityServiceTest
+## 🧪 Unit Test
+<details>
+  <summary>📌 <b>CommunityServiceTest</b></summary>
+  <img src="./docs/CommunityServiceTest.png" alt="CommunityServiceTest" width="600"/>
+</details>
 
-### IndicatorServiceImplTest
+<details>
+  <summary>📈 <b>IndicatorServiceImplTest</b></summary>
+  <img src="./docs/IndicatorServiceImplTest.png" alt="IndicatorServiceImplTest" width="600"/>
+</details>
 
-### NewsServiceImplTest
+<details>
+  <summary>📰 <b>NewsServiceImplTest</b></summary>
+  <img src="./docs/NewsServiceImplTest.png" alt="NewsServiceImplTest" width="600"/>
+</details>
 
-### PredicationServiceImplTest
+<details>
+  <summary>🔮 <b>PredicationServiceImplTest</b></summary>
+  <img src="./docs/PredicationServiceImplTest.png" alt="PredicationServiceImplTest" width="600"/>
+</details>
 
-### StockRestClientServiceTest
+<details>
+  <summary>💹 <b>StockRestClientServiceTest</b></summary>
+  <img src="./docs/StockRestClientServiceTest.png" alt="StockRestClientServiceTest" width="600"/>
+</details>
 
-### StockServiceImplTest
-
+<details>
+  <summary>📊 <b>StockServiceImplTest</b></summary>
+  <img src="./docs/StockServiceImplTest.png" alt="StockServiceImplTest" width="600"/>
+</details>
