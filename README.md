@@ -155,7 +155,7 @@ Stock101은 S&P500 상위 10개 종목을 중심으로 기업 정보 + 투자자
 ## [🎯API 명세서](https://ber5f1ykpv.apidog.io/)
 <img width="1445" height="1082" alt="image" src="https://github.com/user-attachments/assets/68fbff20-239e-419f-bcd8-bb7c196edfe6" />
 
-## 파이프라인
+## 🔗CI/CD 파이프라인
 <details>
 	<summary><b>세부정보</b></summary>
 	
