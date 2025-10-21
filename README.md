@@ -444,3 +444,12 @@ pipeline {
   <summary>📊 <b>StockServiceImplTest</b></summary>
   <img src="./docs/StockServiceImplTest.png" alt="StockServiceImplTest" width="600"/>
 </details>
+
+## 회고록
+|   이 름  | 내용 |
+|--------|--------|
+| 박종원 |  |
+| 손혜원 |  |
+| 이승진 |  |
+| 임성민 |  |
+| 조원석 |  |
