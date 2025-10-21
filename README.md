@@ -11,8 +11,10 @@
 5. [🪧ERD](#ERD)
 6. [🗃️테이블 명세서](#테이블-명세서)
 7. [🎯API 명세서](#API-명세서)
-8. [🎬CI/CD Flow](#CI/CD-Flow)
-9. [🧪Unit Test](#Unit-Test)
+8. [🔗CI/CD 파이프라인](#cicd-파이프라인)
+9. [🎬CI/CD Flow](#cicd-flow)
+10. [🧪Unit Test](#-unit-test)
+11. [회고록](#회고록)
 ---
 ### 👥팀원
 
