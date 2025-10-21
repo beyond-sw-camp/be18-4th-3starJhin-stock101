@@ -175,7 +175,7 @@ Stock101은 S&P500 상위 10개 종목을 중심으로 기업 정보 + 투자자
 #### 4.2. Frontend
 ![](./docs/도커허브프론트.png)
 
-### 5. Menifests 반영 결과
+### 5. Manifests 반영 결과
 ![](./docs/매니페스트-결과.png)
 
 ### 6. ArgoCD 배포 확인
